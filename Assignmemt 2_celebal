@@ -1,0 +1,473 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "private_outputs": true,
+      "provenance": [],
+      "mount_file_id": "1fmvBN_9NID8wy2TuBjwoz3U2e94X3Y5j",
+      "authorship_tag": "ABX9TyP4XvHfStubuO/zx3OYOU37",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/harshtiwari2806/Celebal_Project/blob/main/Assignmemt%202_celebal\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "0TYi849-ItRG"
+      },
+      "outputs": [],
+      "source": [
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "import seaborn as sns\n",
+        "import matplotlib.pyplot as plt"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = pd.read_csv('/content/tesla_deliveries_dataset_2015_2025.csv')\n",
+        "print(\"Shape:\", df.shape)\n",
+        "\n",
+        "print(\"\\nColumns:\")\n",
+        "print(df.columns.tolist())\n",
+        "\n",
+        "print(\"\\nInfo:\")\n",
+        "df.info()\n",
+        "\n",
+        "print(\"\\nDescribe:\")\n",
+        "display(df.describe())"
+      ],
+      "metadata": {
+        "id": "u3xIjdQPZa8-"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"Missing Values\")\n",
+        "print(df.isnull().sum())\n",
+        "\n",
+        "print(\"\\nDuplicate Rows\")\n",
+        "print(df.duplicated().sum())"
+      ],
+      "metadata": {
+        "id": "LVz_vlYKZj42"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "plt.figure(figsize=(8,5))\n",
+        "\n",
+        "sns.scatterplot(\n",
+        "    x=df['Production_Units'],\n",
+        "    y=df['Estimated_Deliveries']\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Production vs Deliveries\")\n",
+        "\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "IVNHdrjJZ1kC"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "plt.figure(figsize=(8,5))\n",
+        "\n",
+        "sns.barplot(\n",
+        "    data=df,\n",
+        "    x='Region',\n",
+        "    y='Estimated_Deliveries',\n",
+        "    color = 'blue'\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Estimated Deliveries by Region\")\n",
+        "plt.xlabel(\"Region\")\n",
+        "plt.ylabel(\"Estimated Deliveries\")\n",
+        "\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "gjXJV_-wZ4rC"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "plt.figure(figsize=(10,6))\n",
+        "\n",
+        "sns.heatmap(\n",
+        "    df.corr(numeric_only=True),\n",
+        "    annot=True,\n",
+        "    cmap='coolwarm'\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Correlation Heatmap\")\n",
+        "\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "uQxgRqIjZ_TM"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "trend = df.groupby('Year')['Estimated_Deliveries'].mean().reset_index()\n",
+        "\n",
+        "plt.figure(figsize=(8,5))\n",
+        "\n",
+        "sns.lineplot(\n",
+        "    data=trend,\n",
+        "    x='Year',\n",
+        "    y='Estimated_Deliveries'\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Average Deliveries Over Time\")\n",
+        "plt.xlabel(\"Year\")\n",
+        "plt.ylabel(\"Average Deliveries\")\n",
+        "\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "2kmOfCLnaFdK"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "X = df.drop('Estimated_Deliveries', axis=1)\n",
+        "\n",
+        "y = df['Estimated_Deliveries']\n",
+        "\n",
+        "print(X.shape)\n",
+        "\n",
+        "print(y.shape)"
+      ],
+      "metadata": {
+        "id": "6B1KeBEpaKyU"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "categorical_features = ['Region', 'Model', 'Source_Type']\n",
+        "X = pd.get_dummies(X, columns=categorical_features, drop_first=True)\n",
+        "print('Shape of X after one-hot encoding:', X.shape)"
+      ],
+      "metadata": {
+        "id": "WJnCz-FDaUqh"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.model_selection import train_test_split\n",
+        "\n",
+        "X_train, X_test, y_train, y_test = train_test_split(\n",
+        "    X,\n",
+        "    y,\n",
+        "    test_size=0.2,\n",
+        "    random_state=42\n",
+        ")\n",
+        "\n",
+        "print(X_train.shape)\n",
+        "\n",
+        "print(X_test.shape)"
+      ],
+      "metadata": {
+        "id": "yryI--yvad1w"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.ensemble import RandomForestRegressor\n",
+        "\n",
+        "model = RandomForestRegressor(\n",
+        "    n_estimators=100,\n",
+        "    random_state=42\n",
+        ")\n",
+        "\n",
+        "model.fit(X_train, y_train)"
+      ],
+      "metadata": {
+        "id": "XoFHbpCIay9N"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "y_pred = model.predict(X_test)\n",
+        "\n",
+        "print(y_pred[:10])"
+      ],
+      "metadata": {
+        "id": "eZWPIg14a8TD"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.metrics import (\n",
+        "    mean_absolute_error,\n",
+        "    mean_squared_error,\n",
+        "    r2_score\n",
+        ")\n",
+        "\n",
+        "import numpy as np\n",
+        "\n",
+        "mae = mean_absolute_error(y_test,y_pred)\n",
+        "\n",
+        "rmse = np.sqrt(\n",
+        "    mean_squared_error(y_test,y_pred)\n",
+        ")\n",
+        "\n",
+        "r2 = r2_score(y_test,y_pred)\n",
+        "\n",
+        "print(mae)\n",
+        "print(rmse)\n",
+        "print(r2)"
+      ],
+      "metadata": {
+        "id": "MSTB2CdcbAII"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df['Deliveries_Lag1'] = df['Estimated_Deliveries'].shift(1)\n",
+        "\n",
+        "df['Deliveries_Lag1'] = df['Deliveries_Lag1'].fillna(\n",
+        "    df['Deliveries_Lag1'].mean()\n",
+        ")\n",
+        "df['Rolling_Mean_3'] = (\n",
+        "    df['Estimated_Deliveries']\n",
+        "    .rolling(3)\n",
+        "    .mean()\n",
+        ")\n",
+        "\n",
+        "df['Rolling_Mean_3'] = df['Rolling_Mean_3'].fillna(\n",
+        "    df['Rolling_Mean_3'].mean()\n",
+        ")\n",
+        "df[['Estimated_Deliveries', 'Deliveries_Lag1']].head()\n",
+        "print(df[['Estimated_Deliveries',\n",
+        "          'Deliveries_Lag1',\n",
+        "          'Rolling_Mean_3']].head())"
+      ],
+      "metadata": {
+        "id": "6VSUtujwbIQd"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "plt.figure(figsize=(10, 7))\n",
+        "sns.scatterplot(x=y_test, y=y_pred, alpha=0.6)\n",
+        "plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2, label='Perfect Prediction Line')\n",
+        "plt.xlabel('Actual Estimated Deliveries')\n",
+        "plt.ylabel('Predicted Estimated Deliveries')\n",
+        "plt.title('Actual vs. Predicted Estimated Deliveries')\n",
+        "plt.legend()\n",
+        "plt.grid(True)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "i1IUcZ91beKo"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.ensemble import RandomForestRegressor\n",
+        "from sklearn.model_selection import GridSearchCV\n",
+        "\n",
+        "params = {\n",
+        "    'n_estimators':[50,100],\n",
+        "    'max_depth':[5,10,None]\n",
+        "}\n",
+        "\n",
+        "rf = RandomForestRegressor(\n",
+        "    random_state=42\n",
+        ")\n",
+        "\n",
+        "grid = GridSearchCV(\n",
+        "    rf,\n",
+        "    params,\n",
+        "    cv=5,\n",
+        "    scoring='r2'\n",
+        ")\n",
+        "\n",
+        "grid.fit(X_train,y_train)"
+      ],
+      "metadata": {
+        "id": "-XS3Le7-bxtZ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(grid.best_params_)"
+      ],
+      "metadata": {
+        "id": "LZPbC7YBb9Pi"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "best_rf = grid.best_estimator_\n",
+        "\n",
+        "rf_pred = best_rf.predict(X_test)\n",
+        "\n",
+        "print(\n",
+        "    r2_score(y_test,rf_pred)\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "rFd-M1yhcYwC"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Future Predictions"
+      ],
+      "metadata": {
+        "id": "jKvqx5RpcjZz"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "current_max_year = df['Year'].max()\n",
+        "future_years = range(current_max_year + 1, current_max_year + 6) # Predict for 5 future years (2026-2030)\n",
+        "future_months = range(1, 13)\n",
+        "unique_regions = df['Region'].unique()\n",
+        "unique_models = df['Model'].unique()\n",
+        "unique_source_types = df['Source_Type'].unique()\n",
+        "\n",
+        "from itertools import product\n",
+        "future_data_combinations = list(product(future_years, future_months, unique_regions, unique_models, unique_source_types))\n",
+        "\n",
+        "future_df_input = pd.DataFrame(future_data_combinations, columns=['Year', 'Month', 'Region', 'Model', 'Source_Type'])\n",
+        "\n",
+        "numeric_cols_for_mean = ['Production_Units', 'Avg_Price_USD', 'Battery_Capacity_kWh', 'Range_km', 'CO2_Saved_tons', 'Charging_Stations']\n",
+        "for col in numeric_cols_for_mean:\n",
+        "    # Introduce a small random variation around the mean for future predictions\n",
+        "    # This makes the future predictions non-constant.\n",
+        "    # Using a uniform distribution from -5% to +5% of the mean.\n",
+        "    future_df_input[col] = df[col].mean() * (1 + np.random.uniform(-0.05, 0.05, len(future_df_input)))\n",
+        "\n",
+        "future_X_encoded = pd.get_dummies(future_df_input, columns=categorical_features, drop_first=True)\n",
+        "\n",
+        "missing_cols = set(X.columns) - set(future_X_encoded.columns)\n",
+        "for c in missing_cols:\n",
+        "    future_X_encoded[c] = 0\n",
+        "\n",
+        "extra_cols = set(future_X_encoded.columns) - set(X.columns)\n",
+        "if extra_cols:\n",
+        "    future_X_encoded = future_X_encoded.drop(columns=list(extra_cols))\n",
+        "\n",
+        "future_X_encoded = future_X_encoded[X.columns]\n",
+        "\n",
+        "future_predictions = best_rf.predict(future_X_encoded)\n",
+        "\n",
+        "future_df_input['Predicted_Estimated_Deliveries'] = future_predictions\n",
+        "\n",
+        "print(\"First 5 rows of Future Predictions:\")\n",
+        "display(future_df_input.head())\n",
+        "\n",
+        "#display average predictions per year\n",
+        "average_yearly_predictions = future_df_input.groupby('Year')['Predicted_Estimated_Deliveries'].mean().reset_index()\n",
+        "print(\"\\nAverage Yearly Predicted Deliveries:\")\n",
+        "display(average_yearly_predictions)"
+      ],
+      "metadata": {
+        "id": "1rePJOmscraf"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "plt.figure(figsize=(10, 6)) # Increased figure size to accommodate more years\n",
+        "sns.lineplot(\n",
+        "    data=average_yearly_predictions,\n",
+        "    x='Year',\n",
+        "    y='Predicted_Estimated_Deliveries',\n",
+        "    marker='o' # Add markers for clarity\n",
+        ")\n",
+        "plt.title('Average Yearly Predicted Deliveries (2026-2030)') # Updated title\n",
+        "plt.xlabel('Year')\n",
+        "plt.ylabel('Average Predicted Deliveries')\n",
+        "plt.xticks(average_yearly_predictions['Year']) # Ensure all years are shown on x-axis\n",
+        "plt.grid(True, linestyle='--', alpha=0.7)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "QRgYrZLPdX2T"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
